@@ -1,93 +1,183 @@
-<form class="example-form" [formGroup]="formGroup" (ngSubmit)="send()">
-  <h2 class="header-form">Datos Personales</h2>
+<form class="example-form" [formGroup]="casopropuestoForm" (ngSubmit)="guardar()">
+  <h2 class="header-form">CREAR LIBRO</h2>
   <div class="row">
-    <!-- nombre -->
+    <!-- titulo -->
     <mat-form-field class="example-full-width">
-      <mat-label>Nombres</mat-label>
-      <input type="text" matInput formControlName="nombres" [errorStateMatcher]="matcher" placeholder="Josue David">
-      <mat-error *ngIf="formGroup.get('nombres')?.hasError('required')">
-        El nombre es <strong>requerido</strong>
-      </mat-error>
+      <mat-label>Titulo</mat-label>
+      <input type="text" matInput formControlName="titulo"  placeholder="">
+      <!-- <mat-error *ngIf="casopropuestoForm.get('titulo')?.hasError('required')">
+        El titulo es <strong>requerido</strong>
+      </mat-error> -->
     </mat-form-field>
-    <!-- Apellidos -->
+
+    <!-- fecha -->
     <mat-form-field class="example-full-width">
-      <mat-label>Apellidos</mat-label>
-      <input type="text" matInput formControlName="apellidos" [errorStateMatcher]="matcher"
-        placeholder="Dominguez Huamani">
-      <mat-error *ngIf="formGroup.get('apellidos')?.hasError('required')">
-        El apellidos es <strong>requerido</strong>
-      </mat-error>
+      <mat-label>Fecha de Lanzamiento</mat-label>
+      <input type="date" matInput formControlName="fechalan"  placeholder="">
+      <!-- <mat-error *ngIf="casopropuestoForm.get('fechalan')?.hasError('required')">
+        La fecha es <strong>requerida</strong>
+      </mat-error> -->
     </mat-form-field>
-    <!-- email -->
+
+    <!-- idioma -->
     <mat-form-field class="example-full-width">
-      <mat-label>Email</mat-label>
-      <input type="email" matInput formControlName="email" [errorStateMatcher]="matcher"
-        placeholder="example@upeu.edu.pe">
-      <mat-error *ngIf="formGroup.get('email')?.hasError('required')">
-        Introduce un email valido
-      </mat-error>
-      <mat-error *ngIf="formGroup.get('email')?.hasError('required')">
-        El email es <strong>requerido</strong>
-      </mat-error>
+      <mat-label>Idioma</mat-label>
+      <input type="text" matInput formControlName="idioma" placeholder="">
+      <!-- <mat-error *ngIf="casopropuestoForm.get('email')?.hasError('required')">
+        El idioma es <strong>requerido</strong>
+      </mat-error> -->
     </mat-form-field>
   </div>
+
   <div class="row">
-    <!-- codigo -->
+    <!-- paginas -->
     <mat-form-field class="example-full-width">
-      <mat-label>Código</mat-label>
-      <input type="number" matInput formControlName="codigo" [errorStateMatcher]="matcher" placeholder="197010543">
-      <mat-error *ngIf="formGroup.get('codigo')?.hasError('required')">
-        El codigo es <strong>requerido</strong>
-      </mat-error>
+      <mat-label>Paginas</mat-label>
+      <input type="number" matInput formControlName="paginas" placeholder="">
+      <!-- <mat-error *ngIf="casopropuestoForm.get('paginas')?.hasError('required')">
+        Las paginas son <strong>requeridas</strong>
+      </mat-error> -->
     </mat-form-field>
-    <!-- dni -->
+
+    <!-- descripcion -->
+    <mat-form-field class="example-full-widthd">
+      <mat-label>Descripcion</mat-label>
+      <textarea type="text" matInput formControlName="descripcion"  placeholder=""></textarea>
+      <!-- <mat-error *ngIf="casopropuestoForm.get('descripcion')?.hasError('required')">
+        la description es <strong>requerida</strong>
+      </mat-error> -->
+    </mat-form-field>
+    <!-- portada -->
     <mat-form-field class="example-full-width">
-      <mat-label>Dni</mat-label>
-      <input type="number" matInput formControlName="dni" [errorStateMatcher]="matcher" placeholder="78923141">
-      <mat-error *ngIf="formGroup.get('dni')?.hasError('required')">
-        El dni es <strong>requerido</strong>
-      </mat-error>
+      <mat-label>Portada</mat-label>
+      <input type="text" matInput formControlName="portada"  placeholder="">
+      <!-- <mat-error *ngIf="casopropuestoForm.get('portada')?.hasError('required')">
+        La portada es <strong>requerida</strong>
+      </mat-error> -->
+    </mat-form-field>
+
+  </div>
+
+  <div class="row">
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Autor</mat-label>
+      <mat-select name="autor" id="autor" formControlName="autor">
+          <mat-option value="" [value]="item" *ngFor="let item of autores">{{item.autor}}
+          </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Categoria</mat-label>
+      <mat-select name="categoria" id="categoria" formControlName="categoria">
+          <mat-option value="" [value]="item" *ngFor="let item of categorias">{{item.categoria}}
+          </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Editorial</mat-label>
+      <mat-select name="editorial" id="editorial" formControlName="editorial">
+          <mat-option value="" [value]="item" *ngFor="let item of editoriales">{{item.editorial}}
+          </mat-option>
+      </mat-select>
     </mat-form-field>
   </div>
-  <h2 class="header-form">Datos Académicos</h2>
-  <div class="row">
-    <!-- carrera -->
-    <mat-form-field class="example-full-width">
-      <mat-label>Carrera</mat-label>
-      <input type="text" matInput formControlName="carrera" [matAutocomplete]="autocarrera">
-      <mat-autocomplete #autocarrera="matAutocomplete" [displayWith]="displayFn">
-        <mat-option *ngFor="let option of filteredOptionsCarrera | async" [value]="option">
-          {{option.name}}
-        </mat-option>
-      </mat-autocomplete>
-    </mat-form-field>
-    <!-- ciclo -->
-    <mat-form-field class="example-full-width">
-      <mat-label>Ciclo</mat-label>
-      <input type="text" matInput formControlName="ciclo" [matAutocomplete]="autociclo">
-      <mat-autocomplete #autociclo="matAutocomplete" [displayWith]="displayFn2">
-        <mat-option *ngFor="let option of filteredOptionsCiclo | async" [value]="option">
-          {{option.ciclo}}
-        </mat-option>
-      </mat-autocomplete>
-    </mat-form-field>
-    <!-- username -->
-    <mat-form-field class="example-full-width">
-      <mat-label>Username</mat-label>
-      <input type="text" matInput formControlName="username" [errorStateMatcher]="matcher" placeholder="example123">
-    </mat-form-field>
-    <!-- Password -->
-    <mat-form-field class="example-full-width">
-      <mat-label>Password</mat-label>
-      <input matInput [type]="hide ? 'password' : 'text'" formControlName="password">
-      <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
-        [attr.aria-pressed]="hide">
-        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-      </button>
-    </mat-form-field>
-  </div>
+
+
   <div class="row">
     <button mat-raised-button class="btn--agregar" type="submit">Agregar</button>
-    <a [routerLink]="['/home/proyecto/agregar']">cancelar</a>
+    <!-- <a [routerLink]="['/home/proyecto/agregar']">cancelar</a> -->
   </div>
 </form>
+
+<h2 class="header-form">LIBROS REGISTRADOS</h2>
+<mat-card class="example-card">
+  <mat-card-header>
+    <div mat-card-avatar class="example-header-image"></div>
+    <mat-card-title></mat-card-title>
+    <mat-card-subtitle></mat-card-subtitle>
+  </mat-card-header>
+  <div class="mat-elevation-z8">
+    <table mat-table #table matSort [dataSource]="dataSource" class="mat-elevation-z8">
+
+      <ng-container matColumnDef="id">
+        <th mat-header-cell mat-sort-header *matHeaderCellDef> ID </th>
+        <td mat-cell *matCellDef="let item"> {{item.id}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="titulo">
+        <th mat-header-cell mat-sort-header *matHeaderCellDef> Titulo </th>
+        <td mat-cell *matCellDef="let item"> {{item.titulo}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="fechalan">
+        <th mat-header-cell mat-sort-header *matHeaderCellDef> Fecha de Lanzamiento </th>
+        <td mat-cell *matCellDef="let item"> {{item.fechalan}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="idioma">
+        <th mat-header-cell mat-sort-header *matHeaderCellDef> Idioma </th>
+        <td mat-cell *matCellDef="let item"> {{item.idioma}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="paginas">
+        <th mat-header-cell mat-sort-header *matHeaderCellDef> Paginas </th>
+        <td mat-cell *matCellDef="let item"> {{item.paginas}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="descripcion">
+        <th mat-header-cell mat-sort-header *matHeaderCellDef> Descripcion </th>
+        <td mat-cell *matCellDef="let item"> {{item.descripcion}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="portada">
+        <th mat-header-cell mat-sort-header *matHeaderCellDef> Portada </th>
+        <td mat-cell *matCellDef="let item"> {{item.portada}} </td>
+      </ng-container>
+
+
+      <ng-container matColumnDef="autor">
+        <th mat-header-cell mat-sort-header *matHeaderCellDef> Autor </th>
+        <td mat-cell *matCellDef="let item"> {{item.autor.autor}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="categoria">
+        <th mat-header-cell mat-sort-header *matHeaderCellDef> Categoria </th>
+        <td mat-cell *matCellDef="let item"> {{item.categoria.categoria}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="editorial">
+        <th mat-header-cell mat-sort-header *matHeaderCellDef> Editorial </th>
+        <td mat-cell *matCellDef="let item"> {{item.editorial.editorial}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="options">
+        <th mat-header-cell *matHeaderCellDef> Opciones </th>
+        <td mat-cell *matCellDef="let item">
+
+          <div class="example-button-container">
+            <button mat-mini-fab color="basic" aria-label="Example icon button with a edit icon"
+              (click)="editar(item)">
+              <mat-icon>edit</mat-icon>
+            </button>
+
+            <button mat-mini-fab color="basic" aria-label="Example icon button with a delete icon"
+              (click)="eliminar(item)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+    </table>
+    <mat-paginator #paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" [showFirstLastButtons]="true">
+    </mat-paginator>
+  </div>
+</mat-card>
+
+

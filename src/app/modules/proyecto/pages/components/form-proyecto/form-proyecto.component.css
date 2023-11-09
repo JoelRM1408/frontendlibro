@@ -8,6 +8,12 @@
 .example-full-width {
   width: 30%;
   margin: 0 10px;
+  height: 15%;
+}
+
+.example-full-widthd {
+  width: 30%;
+  margin: 0 10px;
 }
 
 .row {
@@ -51,4 +57,12 @@ button{
 .btn--agregar{
   background-color: #003366 !important;
   color: #ffff !important;
+}
+
+.example-button-container {
+  display: flex;
+}
+
+.btn--agregar{
+  width: 10%;
 }

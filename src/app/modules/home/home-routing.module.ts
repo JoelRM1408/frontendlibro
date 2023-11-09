@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ProyectoComponent } from '../proyecto/pages/proyecto/proyecto.component';
 import { HomeComponent } from './pages/home/home.component';
-import { PruebaComponent } from '../proyecto/pages/components/prueba/prueba.component';
 
 const routes: Routes = [
 {
@@ -12,10 +11,6 @@ const routes: Routes = [
     {
         path: 'welcome',
         loadChildren: () => import('../welcome/welcome.module').then(m => m.WelcomeModule)
-      },
-      {
-        path: 'convenio',
-        loadChildren: () => import('../convenios/convenios.module').then(m => m.ConveniosModule)
       },
       {
         path: 'proyecto',

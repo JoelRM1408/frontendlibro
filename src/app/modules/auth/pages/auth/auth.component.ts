@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 })
 export class AuthComponent implements OnInit{
 
-  
+
   formLogin: FormGroup = new FormGroup({});
 
   constructor(private router:Router){}
@@ -34,7 +34,7 @@ export class AuthComponent implements OnInit{
   public sendUser(){
     const {value} = this.formLogin
     console.log(value)
-     if (value.user==='jdominguez123'&& value.password === '1234567' ) {
+     if (value.user==='joel.rivera'&& value.password === '202212840' ) {
       this.router.navigate(['/home/welcome']);
      }
 

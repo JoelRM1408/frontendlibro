@@ -1,9 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormGroupDirective, NgForm, Validators } from '@angular/forms';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
 import { Persona } from 'src/app/core/models/persona';
+import { AutorService } from 'src/app/services/autor/autor.service';
+import { CategoriaService } from 'src/app/services/categoria/categoria.service';
+import { EditorialService } from 'src/app/services/editorial/editorial.service';
+import { LibroService } from 'src/app/services/libro/libro.service';
 
 @Component({
   selector: 'app-form-proyecto',
@@ -11,95 +18,129 @@ import { Persona } from 'src/app/core/models/persona';
   styleUrls: ['./form-proyecto.component.css']
 })
 export class FormProyectoComponent implements OnInit {
-  usuario!: Persona;
-  formGroup: FormGroup = new FormGroup({});
-  matcher = new MyErrorStateMatcher();
-  hide:boolean = true;
-  optionsCarrera: any[] = [
-    { name: 'Ingenieria de Sistemas' },
-    { name: 'Contabilidad' },
-    { name: 'Administracion' }
-  ];
-  filteredOptionsCarrera?: Observable<any[]>;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  optionsCiclo: any[] = [
-    { ciclo: 'I' },
-    { ciclo: 'II' },
-    { ciclo: 'III' },
-    { ciclo: 'IV' },
-    { ciclo: 'V' },
-    { ciclo: 'VI' }
-  ];
-  filteredOptionsCiclo?: Observable<any[]>;
+  @ViewChild(MatSort)sort: MatSort = new MatSort;
 
+
+  casopropuestoForm : FormGroup =new FormGroup({});
+
+  autores:any;
+  editoriales:any;
+  categorias:any;
+  libros: any;
+  dataSource!: MatTableDataSource<any>;
+  displayedColumns: string[] = ['id', 'titulo', 'fechalan', 'idioma', 'paginas', 'descripcion', 'portada','autor','categoria','editorial','options']
+
+  panelOpenState = false;
+  constructor(
+    public fb:FormBuilder,
+    public autorService:AutorService,
+    public editorialService:EditorialService,
+    public categoriaService:CategoriaService,
+    public libroService:LibroService,
+  ){
+
+  }
+  // ngAfterViewInit(): void {
+  //   this.setDataAndPagination();
+  // }
   ngOnInit() {
-    this.inithiliazerInputs();
-    this.searchCarrera();
-    this.searchCiclo();
+
+    this.casopropuestoForm = this.fb.group ({
+      id: [''],
+      titulo:['', Validators.required],
+      fechalan:['', Validators.required],
+      idioma:['', Validators.required],
+      paginas:['', Validators.required],
+      descripcion:['', Validators.required],
+      portada:['', Validators.required],
+      autor:['', Validators.required],
+      categoria:['', Validators.required],
+      editorial:['', Validators.required],
+    });;
+
+    this.libroService.getallLibros().subscribe(resp => {
+      this.libros = resp;
+      this.setDataAndPagination();
+
+      //console.log(resp);
+    },
+      error => { console.error(error) }
+    )
+    this.autorService.getallAutores().subscribe(resp => {
+      this.autores = resp;
+
+      //console.log(resp);
+    },
+      error => { console.error(error) }
+    )
+
+    this.categoriaService.getallCategorias().subscribe(resp => {
+      this.categorias = resp;
+      //console.log(resp);
+    },
+      error => { console.error(error) }
+    )
+
+    this.editorialService.getallEditoriales().subscribe(resp => {
+      this.editoriales = resp;
+      //console.log(resp);
+    },
+      error => { console.error(error) }
+    )
   }
 
-  private _filterCarrera(name: string): any[] {
-    const filterValue = name.toLowerCase();
-    return this.optionsCarrera.filter(option => option.name.toLowerCase().includes(filterValue));
+
+  guardar():void{
+    console.log(this.casopropuestoForm.value)
+    this.libroService.saveLibro(this.casopropuestoForm.value).subscribe(resp=>{
+      this.casopropuestoForm.reset();
+      this.libros= this.libros.filter((libro: { id: any; })=> resp.id!=libro.id);
+      this.libros.push(resp);
+      this.setDataAndPagination();
+    },
+      error=> {console.error(error)}
+    )
   }
 
-  private _filterCiclo(name: string): any[] {
-    const filterValue = name.toLowerCase();
-    return this.optionsCiclo.filter(option => option.ciclo.toLowerCase().includes(filterValue));
-  }
+  eliminar(libro: { id: any }) {
+    // Realiza la eliminación de forma optimista en la vista
+    const libroIndex = this.libros.findIndex((l: { id: any; }) => l.id === libro.id);
+    if (libroIndex !== -1) {
+      this.libros.splice(libroIndex, 1);
+    }
 
-  public searchCarrera() {
-    this.filteredOptionsCarrera = this.formGroup.get('carrera')?.valueChanges.pipe(
-      startWith(''),
-      map(value => {
-        const name = typeof value === 'string' ? value : value?.name;
-        return name ? this._filterCarrera(name as string) : this.optionsCarrera.slice();
-      })
-    );
-  }
-
-  public searchCiclo() {
-    this.filteredOptionsCiclo = this.formGroup.get('ciclo')?.valueChanges.pipe(
-      startWith(''),
-      map(value => {
-        const name = typeof value === 'string' ? value : value?.ciclo;
-        return name ? this._filterCiclo(name as string) : this.optionsCiclo.slice();
-      })
-    );
-  }
-
-  public displayFn(user: any): string {
-    return user && user.name ? user.name : '';
-  }
-
-  public displayFn2(user: any): string {
-    return user && user.ciclo ? user.ciclo : '';
-  }
-
-  public inithiliazerInputs() {
-    this.usuario = new Persona();
-    this.formGroup = new FormGroup({
-      nombres: new FormControl(this.usuario.nombres, [Validators.required]),
-      email: new FormControl(this.usuario.email, [Validators.required, Validators.email]),
-      apellidos: new FormControl(this.usuario.apellidos, [Validators.required]),
-      codigo: new FormControl(this.usuario.codigo, [Validators.required]),
-      dni: new FormControl(this.usuario.dni, [Validators.required]),
-      carrera: new FormControl(this.usuario.carrera, [Validators.required]),
-      ciclo: new FormControl(this.usuario.ciclo, [Validators.required]),
-      username: new FormControl(this.usuario.username),
-      password: new FormControl(this.usuario.password)
+    // Luego, intenta eliminar el libro en el servidor
+    this.libroService.deleteLibro(libro.id).subscribe(resp => {
+      //console.log();
+      // if (resp !== true) {
+      //   // Si la eliminación en el servidor falla, revierte la actualización en la vista
+      //   this.libros.splice(libroIndex, 0, libro);
+      // }
     });
+    this.setDataAndPagination();
   }
 
-  public send(){
-    console.log(this.formGroup.value)
+  editar(libro: { id:any; titulo: any; fechalan: any; idioma: any; paginas: any; descripcion: any; portada: any; autor: any; categoria: any; editorial: any; }){
+    this.casopropuestoForm.setValue({
+      id: libro.id,
+      titulo: libro.titulo,
+      fechalan: libro.fechalan,
+      idioma: libro.idioma,
+      paginas: libro.paginas,
+      descripcion: libro.descripcion,
+      portada: libro.portada,
+      autor: libro.autor,
+      categoria: libro.categoria,
+      editorial: libro.editorial,
+    })
   }
-
+  setDataAndPagination(){
+    this.dataSource = new MatTableDataSource(this.libros);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
 }
 
-export class MyErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
-    const isSubmitted = form && form.submitted;
-    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
-  }
-}
+
